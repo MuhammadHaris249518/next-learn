@@ -5,7 +5,7 @@ import {
   CustomersTableType,
   FormattedCustomersTable,
 } from '@/app/lib/definitions';
-
+//d
 export default async function CustomersTable({
   customers,
 }: {
