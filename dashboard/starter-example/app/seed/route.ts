@@ -103,7 +103,16 @@ async function seedRevenue() {
 
 export async function GET() {
   try {
-    const result = await sql.begin((sql) => [
+    // 1. Run the extension setup independently
+    // Neon often has this pre-installed, so we wrap it in its own try/catch
+    try {
+      await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+    } catch (e) {
+      console.log('Extension uuid-ossp might already exist, continuing...');
+    }
+
+    // 2. Seed the tables inside the transaction
+    await sql.begin((sql) => [
       seedUsers(),
       seedCustomers(),
       seedInvoices(),
@@ -112,6 +121,7 @@ export async function GET() {
 
     return Response.json({ message: 'Database seeded successfully' });
   } catch (error) {
+    // Catch-all for other errors (like connection issues)
     return Response.json({ error }, { status: 500 });
   }
 }
