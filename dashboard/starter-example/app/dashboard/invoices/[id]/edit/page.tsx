@@ -2,6 +2,7 @@ import Form from "@/app/ui/invoices/create-form";
 import Breadcrumbs from "@/app/ui/invoices/breadcrumbs";
 import { customers } from "@/app/lib/placeholder-data";
 import { promise } from "zod/v4-mini";
+import { notFound } from "next/navigation";
 import { fetchInvoiceById,fetchCustomers } from "@/app/lib/data";
 export default async function Page(props:{params:Promise<{id:string}>}){
     const params=await props.params;
@@ -10,6 +11,10 @@ export default async function Page(props:{params:Promise<{id:string}>}){
         fetchInvoiceById(id),
         fetchCustomers(),
     ]);
+    if(!invoice){
+        notFound();
+    }
+
     return(
         <main>
         <Breadcrumbs
